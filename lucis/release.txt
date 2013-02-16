@@ -1,0 +1,7 @@
+ssh -t [username],lucis@shell.sourceforge.net create
+mvn clean verify
+mvn release:prepare -DdryRun=true
+mvn release:clean release:prepare
+svn up -r head 
+mvn release:prepare -Dresume
+mvn release:perform

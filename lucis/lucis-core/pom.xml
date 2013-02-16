@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>lucis</artifactId>
+		<groupId>net.sf.lucis</groupId>
+		<version>3.6.4-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>lucis-core</artifactId>
+	<name>Lucene Index Service :: Server Core</name>
+	<description />
+	<dependencies>
+		<dependency>
+			<groupId>net.sf.lucis</groupId>
+			<artifactId>lucis-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.derquinsej</groupId>
+			<artifactId>derquinsej-core</artifactId>
+			<version>${djVersion}</version>
+		</dependency>
+  	<dependency>
+  		<groupId>org.apache.lucene</groupId>
+  		<artifactId>lucene-core</artifactId>
+  		<version>${luceneVersion}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.apache.lucene</groupId>
+  		<artifactId>lucene-highlighter</artifactId>
+  		<version>${luceneVersion}</version>
+  	</dependency>		
+	</dependencies>
+</project>
