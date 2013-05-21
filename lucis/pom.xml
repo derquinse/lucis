@@ -9,7 +9,7 @@
 	<artifactId>lucis</artifactId>
 	<packaging>pom</packaging>
 	<name>Lucene Index Service</name>
-	<version>3.6.4-SNAPSHOT</version>
+	<version>3.6.4</version>
 	<description />
 	<url>http://lucis.sf.net</url>
 	<developers>
@@ -35,7 +35,7 @@
 		<connection>scm:git:https://code.google.com/p/conquiris.lucis/</connection>
 		<developerConnection>scm:git:https://code.google.com/p/conquiris.lucis/</developerConnection>
 		<url>http://code.google.com/p/conquiris/source/browse/?repo=lucis</url>
-		<tag>HEAD</tag>
+		<tag>lucis-3.6.4</tag>
 	</scm>
 	<properties>
 		<luceneVersion>3.6.2</luceneVersion>
