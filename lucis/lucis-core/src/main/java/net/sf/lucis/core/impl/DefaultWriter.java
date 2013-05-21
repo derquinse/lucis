@@ -50,7 +50,7 @@ public final class DefaultWriter extends AbstractWriter implements Writer {
 		super(config);
 	}
 
-	public <T> IndexStatus write(Store<T> store, Batch<T> batch) throws InterruptedException {
+	public <T, P> IndexStatus write(Store<T> store, Batch<T, P> batch) throws InterruptedException {
 		Preconditions.checkNotNull(store, "A destination store must be provided.");
 		if (batch == null) {
 			return null;

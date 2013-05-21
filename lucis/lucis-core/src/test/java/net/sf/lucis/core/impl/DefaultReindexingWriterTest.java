@@ -93,18 +93,22 @@ public class DefaultReindexingWriterTest extends AbstractDirectoryTest {
 		check(Status.DONE02, false);
 	}
 
-	private class Indexer implements FullIndexer {
-		public void index(Adder adder) throws InterruptedException {
+	private class Indexer implements FullIndexer<Object> {
+		public Object index(Adder adder) throws InterruptedException {
 			version++;
 			checkpoint = Integer.toString(version);
 			if (Objects.equal(checkpoint, adder.getCheckpoint())) {
 				adder.skip();
-				return;
+				return null;
 			}
 			for (int i = 0; i < 1000; i++) {
 				adder.add(document(i));
 			}
 			adder.setCheckpoint(checkpoint);
+			return null;
+		}
+		
+		public void afterCommit(Object payload) {
 		}
 	}
 }

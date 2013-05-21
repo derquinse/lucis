@@ -35,8 +35,9 @@ import com.google.common.collect.Lists;
  * checkpoint. Objects of this class are built using a batch builder.
  * @author Andres Rodriguez
  * @param <T> Checkpoint type.
+ * @param <P> Payload type.
  */
-public final class Batch<T> {
+public final class Batch<T, P> {
 	/** Map Entry to term function. */
 	private static final Function<Entry<String, String>, Term> TERM_BUILDER = new Function<Entry<String, String>, Term>() {
 		public Term apply(Entry<String, String> entry) {
@@ -46,15 +47,18 @@ public final class Batch<T> {
 
 	/** The final checkpoint. */
 	private final T checkpoint;
-	/** Addtions. */
+	/** Payload. */
+	private final P payload;
+	/** Additions. */
 	private final ImmutableList<Addition> additions;
 	/** Deletions. */
 	private final ImmutableMultimap<String, String> deletions;
 	/** Whether the index must be recreated before applying the batch. */
 	private final boolean recreate;
 
-	private Batch(final T checkpoint, final Builder<T> builder) {
+	private Batch(final T checkpoint, final P payload, final Builder<T> builder) {
 		this.checkpoint = checkpoint;
+		this.payload = payload;
 		this.additions = ImmutableList.copyOf(builder.additions);
 		this.deletions = builder.deletions.build();
 		this.recreate = builder.recreate;
@@ -66,6 +70,11 @@ public final class Batch<T> {
 
 	public T getCheckpoint() {
 		return checkpoint;
+	}
+
+	/** Returns the payload. */
+	public P getPayload() {
+		return payload;
 	}
 
 	public ImmutableList<Addition> getAdditions() {
@@ -149,12 +158,16 @@ public final class Batch<T> {
 			return this;
 		}
 
-		public Batch<T> build(final T checkpoint) throws InterruptedException {
+		public <P> Batch<T, P> build(final T checkpoint, P payload) throws InterruptedException {
 			throwIfInterrupted();
 			if (checkpoint == null) {
 				return null;
 			}
-			return new Batch<T>(checkpoint, this);
+			return new Batch<T, P>(checkpoint, payload, this);
+		}
+
+		public Batch<T, Object> build(final T checkpoint) throws InterruptedException {
+			return build(checkpoint, null);
 		}
 
 	}

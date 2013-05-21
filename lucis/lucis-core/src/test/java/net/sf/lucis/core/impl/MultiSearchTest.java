@@ -226,7 +226,7 @@ public class MultiSearchTest {
 		return queryable.query(LucisQuery.count(query, null));
 	}
 
-	private Batch<Long> delete(int value, long cp) throws InterruptedException {
+	private Batch<Long, Object> delete(int value, long cp) throws InterruptedException {
 		final Batch.Builder<Long> builder = Batch.builder();
 		return builder.delete(termId(value)).build(cp);
 	}
@@ -235,7 +235,7 @@ public class MultiSearchTest {
 		return new Term(ID, value(value));
 	}
 
-	private Batch<Long> add2(int from, int to, long cp, String str) throws InterruptedException {
+	private Batch<Long, Object> add2(int from, int to, long cp, String str) throws InterruptedException {
 		final Batch.Builder<Long> builder = Batch.builder();
 		for (int i = from; i <= to; i++) {
 			builder.add(document2(i, str));
@@ -243,7 +243,7 @@ public class MultiSearchTest {
 		return builder.build(cp);
 	}
 
-	private Batch<Long> add(int from, int to, long cp, String str) throws InterruptedException {
+	private Batch<Long, Object> add(int from, int to, long cp, String str) throws InterruptedException {
 		final Batch.Builder<Long> builder = Batch.builder();
 		for (int i = from; i <= to; i++) {
 			builder.add(document(i, str));

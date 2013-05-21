@@ -23,11 +23,12 @@ public interface Writer {
 	/**
 	 * Applies a batch of operations.
 	 * @param <T> Checkpoint type.
+	 * @param <P> Payload type.
 	 * @param store Destination store.
 	 * @param batch Batch to apply.
 	 * @return The final index status or {@code null} if the batch is {@code null} or the final
 	 *         checkpoint is equals to the initial one.
 	 * @throws InterruptedException if the current task has been interrupted.
 	 */
-	<T> IndexStatus write(Store<T> store, Batch<T> batch) throws InterruptedException;
+	<T, P> IndexStatus write(Store<T> store, Batch<T, P> batch) throws InterruptedException;
 }

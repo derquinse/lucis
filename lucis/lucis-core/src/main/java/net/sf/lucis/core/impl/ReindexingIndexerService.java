@@ -31,18 +31,19 @@ import net.sf.lucis.core.ReindexingWriter;
 /**
  * Default reindexing service.
  * @author Andres Rodriguez
+ * @param <P> Payload type.
  */
-public class ReindexingIndexerService extends AbstractIndexService implements IndexerService {
+public class ReindexingIndexerService<P> extends AbstractIndexService implements IndexerService {
 	/** Writer. */
 	private final ReindexingWriter writer;
 	/** Index store. */
 	private final ReindexingStore store;
 	/** Indexer. */
-	private final FullIndexer indexer;
+	private final FullIndexer<P> indexer;
 	/** Delays. */
 	private volatile Delays delays = Delays.constant(600000);
 
-	public ReindexingIndexerService(ReindexingStore store, ReindexingWriter writer, FullIndexer indexer,
+	public ReindexingIndexerService(ReindexingStore store, ReindexingWriter writer, FullIndexer<P> indexer,
 			ScheduledExecutorService externalExecutor, boolean pasive) {
 		super(externalExecutor, pasive);
 		this.store = checkNotNull(store);
@@ -50,7 +51,7 @@ public class ReindexingIndexerService extends AbstractIndexService implements In
 		this.indexer = checkNotNull(indexer);
 	}
 
-	public ReindexingIndexerService(ReindexingStore store, ReindexingWriter writer, FullIndexer indexer) {
+	public ReindexingIndexerService(ReindexingStore store, ReindexingWriter writer, FullIndexer<P> indexer) {
 		this(store, writer, indexer, null, false);
 	}
 
@@ -68,15 +69,18 @@ public class ReindexingIndexerService extends AbstractIndexService implements In
 
 	private final class Task extends AbstractTask {
 		public void run() {
-			final Callable<Object> callable = new Callable<Object>() {
-				public Object call() throws Exception {
-					writer.reindex(store, indexer);
-					return null;
+			final Callable<P> callable = new Callable<P>() {
+				public P call() throws Exception {
+					return writer.reindex(store, indexer);
 				}
 			};
 			try {
-				MayFail.run(callable);
-				log().trace("Reindexing complete.");
+				P payload = MayFail.run(callable);
+				log().trace("Reindexing complete. Calling post commit hook");
+				if (payload != null) {
+					postCommit(payload);
+				}
+				log().trace("Post commit hook completed.");
 				schedule(IndexStatus.OK, delays.getNormal());
 			} catch (IndexException e) {
 				log().error(e, "Index exception while reindexing");
@@ -89,6 +93,15 @@ public class ReindexingIndexerService extends AbstractIndexService implements In
 				schedule(IndexStatus.ERROR, delays.getError());
 			}
 		}
+
+		private void postCommit(P payload) {
+			try {
+				indexer.afterCommit(payload);
+			} catch (Throwable t) {
+				log().error(t, "Error processing post commit hook");
+			}
+		}
+
 	}
 
 }

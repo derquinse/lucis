@@ -38,7 +38,7 @@ public class DefaultManagedIndexerServiceTest {
 	private DefaultWriter writer;
 	private Queryable queryable;
 	private volatile int position = 0;
-	private DefaultIndexerService<Long> service = null;
+	private DefaultIndexerService<Long, Object> service = null;
 	private final SecureRandom random = new SecureRandom();
 
 	@BeforeClass
@@ -59,7 +59,7 @@ public class DefaultManagedIndexerServiceTest {
 
 	@Test
 	public void create() {
-		service = new DefaultIndexerService<Long>(store, writer, new TestIndexer());
+		service = new DefaultIndexerService<Long, Object>(store, writer, new TestIndexer());
 		service.setDelays(Delays.constant(10L));
 		assertNotNull(service);
 		service.start();
@@ -84,12 +84,15 @@ public class DefaultManagedIndexerServiceTest {
 		service.stop();
 	}
 
-	private class TestIndexer implements Indexer<Long> {
-		public Batch<Long> index(Long checkpoint) throws InterruptedException {
+	private class TestIndexer implements Indexer<Long, Object> {
+		public Batch<Long, Object> index(Long checkpoint) throws InterruptedException {
 			int start = position;
 			position += 1000;
 			int end = position - 1;
 			return DocumentSupport.batch(start, end, end);
+		}
+		
+		public void afterCommit(Object payload) {
 		}
 	}
 }

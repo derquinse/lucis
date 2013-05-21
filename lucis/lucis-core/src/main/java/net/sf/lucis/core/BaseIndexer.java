@@ -16,18 +16,14 @@
 package net.sf.lucis.core;
 
 /**
- * Interface for incremental indexer objects.
+ * Base interface for incremental indexer objects.
  * @author Andres Rodriguez
- * @param <T> Checkpoint type.
  * @param <P> Payload type.
  */
-public interface Indexer<T, P> extends BaseIndexer<P> {
+public interface BaseIndexer<P> {
 	/**
-	 * Prepares a batch of deletions and additions to apply to an index from an initial checkpoint.
-	 * @param checkpoint Initial checkpoint.
-	 * @return The operations to apply or {@code null} if there is nothing to do.
-	 * @throws RuntimeException if an error happens during batch compilation.
-	 * @throws InterruptedException if the current task has been interrupted.
+	 * Called after a successful commit with the payload provided after indexing.
+	 * It will only be called if a non-null payload is provided by te indexer.
 	 */
-	Batch<T, P> index(T checkpoint) throws InterruptedException;
+	void afterCommit(P payload);
 }

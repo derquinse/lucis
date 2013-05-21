@@ -18,13 +18,14 @@ package net.sf.lucis.core;
 /**
  * Inferface for full indexer objects.
  * @author Andres Rodriguez
+ * @param <P> Payload type.
  */
-public interface FullIndexer {
+public interface FullIndexer<P> extends BaseIndexer<P> {
 	/**
 	 * Create the index.
 	 * @param adder Index adder.
 	 * @throws IndexException if an error occurs.
 	 * @throws InterruptedException if the current task has been interrupted.
 	 */
-	void index(Adder adder) throws InterruptedException;
+	P index(Adder adder) throws InterruptedException;
 }

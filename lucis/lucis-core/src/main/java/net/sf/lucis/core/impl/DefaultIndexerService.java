@@ -29,18 +29,19 @@ import net.sf.lucis.core.Writer;
  * Lucene-based index manager.
  * @author Andres Rodriguez
  * @param <T> Checkpoint type.
+ * @param <P> Payload type.
  */
-public class DefaultIndexerService<T> extends AbstractIndexService implements IndexerService {
+public class DefaultIndexerService<T, P> extends AbstractIndexService implements IndexerService {
 	/** Writer. */
 	private final Writer writer;
 	/** Index store. */
 	private final Store<T> store;
 	/** Indexer. */
-	private final Indexer<T> indexer;
+	private final Indexer<T, P> indexer;
 	/** Delays. */
 	private volatile Delays delays = Delays.constant(1000);
 
-	public DefaultIndexerService(Store<T> store, Writer writer, Indexer<T> indexer,
+	public DefaultIndexerService(Store<T> store, Writer writer, Indexer<T, P> indexer,
 			ScheduledExecutorService externalExecutor, boolean pasive) {
 		super(externalExecutor, pasive);
 		this.store = store;
@@ -48,7 +49,7 @@ public class DefaultIndexerService<T> extends AbstractIndexService implements In
 		this.indexer = indexer;
 	}
 
-	public DefaultIndexerService(Store<T> store, Writer writer, Indexer<T> indexer) {
+	public DefaultIndexerService(Store<T> store, Writer writer, Indexer<T, P> indexer) {
 		this(store, writer, indexer, null, false);
 	}
 
@@ -74,7 +75,7 @@ public class DefaultIndexerService<T> extends AbstractIndexService implements In
 				schedule(IndexStatus.ERROR, delays.getError());
 				return;
 			}
-			final Batch<T> batch;
+			final Batch<T, P> batch;
 			try {
 				batch = indexer.index(checkpoint);
 			} catch (InterruptedException e) {
@@ -95,7 +96,9 @@ public class DefaultIndexerService<T> extends AbstractIndexService implements In
 						log().trace("Writer had nothing to do.");
 						schedule(delays.getIdle());
 					} else {
-						log().trace("Writing complete.");
+						log().trace("Writing complete. Calling post commit hook...");
+						postCommit(batch);
+						log().trace("Post commit hook completed.");
 						schedule(status, delays.getNormal());
 					}
 				}
@@ -105,6 +108,17 @@ public class DefaultIndexerService<T> extends AbstractIndexService implements In
 			} catch (RuntimeException e) {
 				log().error(e, "Unable to write batch");
 				schedule(delays.getError());
+			}
+		}
+
+		private void postCommit(Batch<T, P> batch) {
+			if (batch == null || batch.getPayload() == null) {
+				return;
+			}
+			try {
+				indexer.afterCommit(batch.getPayload());
+			} catch (Throwable t) {
+				log().error(t, "Error processing post commit hook");
 			}
 		}
 	}

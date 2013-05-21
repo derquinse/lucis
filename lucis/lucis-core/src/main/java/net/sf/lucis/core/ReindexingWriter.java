@@ -22,10 +22,11 @@ package net.sf.lucis.core;
 public interface ReindexingWriter {
 	/**
 	 * Reindex.
+	 * @param <P> Payload type.
 	 * @param store Destination store.
 	 * @param indexer Indexer.
 	 * @throws IndexException if an error occurs.
 	 * @throws InterruptedException if the current task has been interrupted.
 	 */
-	void reindex(ReindexingStore store, FullIndexer indexer) throws InterruptedException;
+	<P> P reindex(ReindexingStore store, FullIndexer<P> indexer) throws InterruptedException;
 }

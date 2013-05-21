@@ -34,7 +34,7 @@ import org.apache.lucene.document.Field.Store;
  * @author Emilio Escobar Reyero
  * @param <T>
  */
-public class DummyIndexer<T> implements Indexer<Long> {
+public class DummyIndexer<T> implements Indexer<Long, Object> {
 
 	private final Analyzer analyzer = Factory.get().standardAnalyzer();
 	private BlockingQueue<List<String>> tareas;
@@ -47,10 +47,10 @@ public class DummyIndexer<T> implements Indexer<Long> {
 		return analyzer;
 	}
 
-	public Batch<Long> index(Long checkpoint) throws InterruptedException {
+	public Batch<Long, Object> index(Long checkpoint) throws InterruptedException {
 
 		Long actual = checkpoint != null ? checkpoint : 0;
-		Batch<Long> batch;
+		Batch<Long, Object> batch;
 
 		try {
 			List<String> lote = tareas.take();
@@ -64,12 +64,12 @@ public class DummyIndexer<T> implements Indexer<Long> {
 		return batch;
 	}
 
-	private Batch<Long> emptyBatch(Long checkpoint) throws InterruptedException {
+	private Batch<Long, Object> emptyBatch(Long checkpoint) throws InterruptedException {
 		Builder<Long> builder = Batch.builder();
 		return builder.build(checkpoint);
 	}
 
-	private Batch<Long> generateBatch(Long checkpoint, List<String> lote) throws InterruptedException {
+	private Batch<Long, Object> generateBatch(Long checkpoint, List<String> lote) throws InterruptedException {
 		Builder<Long> builder = Batch.builder();
 
 		for (String t : lote) {
@@ -97,5 +97,8 @@ public class DummyIndexer<T> implements Indexer<Long> {
 		document.add(new Field("idd", "identificador" + String.valueOf(id), Store.YES, Index.NOT_ANALYZED));
 
 		return document;
+	}
+	
+	public void afterCommit(Object payload) {
 	}
 }

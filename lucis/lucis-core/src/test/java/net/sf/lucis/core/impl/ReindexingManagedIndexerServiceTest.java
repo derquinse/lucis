@@ -36,7 +36,7 @@ public class ReindexingManagedIndexerServiceTest extends AbstractDirectoryTest {
 	private ReindexingFSStore store;
 	private DefaultReindexingWriter writer;
 	private Queryable queryable;
-	private ReindexingIndexerService service = null;
+	private ReindexingIndexerService<Object> service = null;
 
 	@BeforeClass
 	public void init() {
@@ -55,7 +55,7 @@ public class ReindexingManagedIndexerServiceTest extends AbstractDirectoryTest {
 
 	@Test
 	public void create() {
-		service = new ReindexingIndexerService(store, writer, new Indexer());
+		service = new ReindexingIndexerService<Object>(store, writer, new Indexer());
 		service.setDelays(Delays.constant(10L));
 		assertNotNull(service);
 		service.start();
@@ -86,16 +86,20 @@ public class ReindexingManagedIndexerServiceTest extends AbstractDirectoryTest {
 		service.stop();
 	}
 
-	private class Indexer implements FullIndexer {
+	private class Indexer implements FullIndexer<Object> {
 		private int version = 0;
 
-		public void index(Adder adder) throws InterruptedException {
+		public Object index(Adder adder) throws InterruptedException {
 			version++;
 			checkpoint = Integer.toString(version);
 			for (int i = 0; i < 1000; i++) {
 				adder.add(document(i));
 			}
 			adder.setCheckpoint(checkpoint);
+			return null;
+		}
+
+		public void afterCommit(Object payload) {
 		}
 	}
 }

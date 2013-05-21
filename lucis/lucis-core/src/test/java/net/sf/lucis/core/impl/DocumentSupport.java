@@ -109,7 +109,7 @@ final class DocumentSupport {
 		Assert.assertNull(node);
 	}
 
-	static Batch<Long> batch(int from, int to, long cp) throws InterruptedException {
+	static Batch<Long, Object> batch(int from, int to, long cp) throws InterruptedException {
 		final Batch.Builder<Long> builder = Batch.builder();
 		for (int i = from; i <= to; i++) {
 			builder.add(document(i));

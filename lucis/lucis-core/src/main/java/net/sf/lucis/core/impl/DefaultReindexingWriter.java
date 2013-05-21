@@ -48,11 +48,12 @@ public final class DefaultReindexingWriter extends AbstractWriter implements Rei
 		super(config);
 	}
 
-	public void reindex(ReindexingStore store, FullIndexer indexer) throws InterruptedException {
+	public <P> P reindex(ReindexingStore store, FullIndexer<P> indexer) throws InterruptedException {
 		final AdderImpl adder = new AdderImpl(store.getDestinationDirectory(), store.getCheckpoint());
 		final boolean indexed;
+		P payload = null;
 		try {
-			indexer.index(adder);
+			payload = indexer.index(adder);
 			indexed = adder.done();
 			adder.commit();
 		} finally {
@@ -60,7 +61,9 @@ public final class DefaultReindexingWriter extends AbstractWriter implements Rei
 		}
 		if (indexed) {
 			store.reindexed(adder.getCheckpoint());
+			return payload;
 		}
+		return null;
 	}
 
 	/**

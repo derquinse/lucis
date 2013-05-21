@@ -38,7 +38,7 @@ public abstract class AbstractStoreTest {
 
 	private static final Writer writer = new DefaultWriter();
 
-	static <T> IndexStatus write(Store<T> store, Batch<T> batch) throws InterruptedException {
+	static <T> IndexStatus write(Store<T> store, Batch<T, Object> batch) throws InterruptedException {
 		return writer.write(store, batch);
 	}
 
@@ -78,7 +78,7 @@ public abstract class AbstractStoreTest {
 		notFound(500);
 	}
 
-	private Batch<Long> delete(int value, long cp) throws InterruptedException {
+	private Batch<Long, Object> delete(int value, long cp) throws InterruptedException {
 		final Batch.Builder<Long> builder = Batch.builder();
 		return builder.delete(termId(value)).build(cp);
 	}

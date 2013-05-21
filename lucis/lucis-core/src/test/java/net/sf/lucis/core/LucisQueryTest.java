@@ -81,7 +81,7 @@ public class LucisQueryTest {
 		Assert.assertNotNull(result);
 	}
 
-	private Batch<Long> add(int from, int to, long cp) throws InterruptedException {
+	private Batch<Long, Object> add(int from, int to, long cp) throws InterruptedException {
 		final Batch.Builder<Long> builder = Batch.builder();
 		for (int i = from; i <= to; i++) {
 			builder.add(document(i));
@@ -108,6 +108,7 @@ public class LucisQueryTest {
 		}
 	};
 
+	@SuppressWarnings("unused")
 	private static class Node {
 		String id;
 		String analyzed;
