@@ -64,7 +64,7 @@ public class RecreateTest {
 		IndexWriter w = new IndexWriter(d, Factory.get().writerConfig().setOpenMode(OpenMode.CREATE_OR_APPEND));
 		write(w, 1, 100);
 		w.close();
-		IndexReader r1 = IndexReader.open(d, true);
+		IndexReader r1 = IndexReader.open(d);
 		IndexSearcher s1 = new IndexSearcher(r1);
 		assertTrue(found(s1, 1));
 		assertTrue(found(s1, 100));
@@ -121,6 +121,7 @@ public class RecreateTest {
 		// assertTrue(found(s1, 200));
 		// assertFalse(found(s1, 300));
 		// assertFalse(found(s1, 1500));
+		s1.close();
 	}
 
 	@Test
