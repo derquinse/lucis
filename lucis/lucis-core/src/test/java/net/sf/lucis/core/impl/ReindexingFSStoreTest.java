@@ -38,7 +38,7 @@ public class ReindexingFSStoreTest extends AbstractDirectoryTest {
 	}
 
 	private File file(Directory d) {
-		return ((FSDirectory)d).getFile();
+		return ((FSDirectory)d).getDirectory();
 	}
 
 	private void assertFile(Directory actual, Directory expected) {

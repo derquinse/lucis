@@ -55,7 +55,7 @@ public class RecreateTest {
 		if (other == null) {
 			return r;
 		} else {
-			Closeables.closeQuietly(r);
+			Closeables.close(r, true);
 			return other;
 		}
 	}

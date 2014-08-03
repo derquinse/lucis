@@ -16,6 +16,7 @@
 package net.sf.lucis.core;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import net.sf.derquinse.lucis.Group;
 import net.sf.derquinse.lucis.GroupResult;
@@ -62,7 +63,7 @@ public abstract class LucisQuery<T> {
 			final DocMapper<T> mapper, final Highlight highlight) {
 		return new LucisQuery<Item<T>>() {
 			public Item<T> perform(final LucisSearcher searcher) {
-				Stopwatch w = new Stopwatch().start();
+				Stopwatch w = Stopwatch.createStarted();
 				Query rewritten = searcher.rewrite(query);
 				TopDocs docs = getTopDocs(searcher, query, filter, sort, 1);
 				if (docs.totalHits > 0) {
@@ -71,9 +72,9 @@ public abstract class LucisQuery<T> {
 					HighlightedQuery highlighted = Objects.firstNonNull(highlight, Highlight.no()).highlight(rewritten);
 					float score = sd.score;
 					T item = mapper.map(sd.doc, score, doc, highlighted.getFragments(doc));
-					return new Item<T>(docs.totalHits, score, w.elapsedMillis(), item);
+					return new Item<T>(docs.totalHits, score, w.elapsed(TimeUnit.MILLISECONDS), item);
 				} else {
-					return new Item<T>(docs.totalHits, 0.0f, w.elapsedMillis(), null);
+					return new Item<T>(docs.totalHits, 0.0f, w.elapsed(TimeUnit.MILLISECONDS), null);
 				}
 			}
 		};
@@ -100,7 +101,7 @@ public abstract class LucisQuery<T> {
 			final DocMapper<T> mapper, final int first, final int pageSize, final Highlight highlight) {
 		return new LucisQuery<Page<T>>() {
 			public Page<T> perform(LucisSearcher searcher) {
-				Stopwatch w = new Stopwatch().start();
+				Stopwatch w = Stopwatch.createStarted();
 				int total = first + pageSize;
 				Query rewritten = searcher.rewrite(query);
 				TopDocs docs = getTopDocs(searcher, rewritten, filter, sort, total);
@@ -116,12 +117,12 @@ public abstract class LucisQuery<T> {
 							T item = mapper.map(sd.doc, score, doc, highlighted.getFragments(doc));
 							items.add(item);
 						}
-						return new Page<T>(docs.totalHits, score, w.elapsedMillis(), first, items);
+						return new Page<T>(docs.totalHits, score, w.elapsed(TimeUnit.MILLISECONDS), first, items);
 					} else {
-						return new Page<T>(docs.totalHits, score, w.elapsedMillis(), first, null);
+						return new Page<T>(docs.totalHits, score, w.elapsed(TimeUnit.MILLISECONDS), first, null);
 					}
 				} else {
-					return new Page<T>(docs.totalHits, 0.0f, w.elapsedMillis(), first, null);
+					return new Page<T>(docs.totalHits, 0.0f, w.elapsed(TimeUnit.MILLISECONDS), first, null);
 				}
 			}
 		};

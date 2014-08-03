@@ -15,8 +15,6 @@
  */
 package net.sf.lucis.core.impl;
 
-import static com.google.common.io.Closeables.closeQuietly;
-
 import java.io.IOException;
 
 import net.sf.derquinse.lucis.SearchException;
@@ -34,6 +32,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopFieldDocs;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.Closeables;
 
 /**
  * Default LucisSearcher implementation.
@@ -99,7 +98,11 @@ public final class DefaultLucisSearcher implements LucisSearcher {
 	}
 
 	public void close() {
-		closeQuietly(searcher);
-		closeQuietly(reader);
+		try {
+			Closeables.close(searcher, true);
+			Closeables.close(reader, true);
+		} catch(IOException e) {
+			// TODO
+		}
 	}
 }

@@ -62,6 +62,7 @@ public class MultiSearchTest {
 
 	private Queryable queryableRAM;
 	private Queryable queryableFS;
+	@SuppressWarnings("unused")
 	private Queryable queryableRAM2;
 	private Queryable queryableMULTI;
 
@@ -188,6 +189,7 @@ public class MultiSearchTest {
 		node.test(value);
 	}
 
+	@SuppressWarnings("unused")
 	private void found2(final Queryable queryable, int value, String str) {
 
 		BooleanClause clauseId = new BooleanClause(new TermQuery(new Term(ID2, value(value))), Occur.MUST);
@@ -203,6 +205,7 @@ public class MultiSearchTest {
 		node.test(value);
 	}
 
+	@SuppressWarnings("unused")
 	private void found(final Queryable queryable, int value) {
 		final Item<Node> item = first(queryable, new TermQuery(termId(value)));
 		assertNotNull(item);
@@ -211,6 +214,7 @@ public class MultiSearchTest {
 		node.test(value);
 	}
 
+	@SuppressWarnings("unused")
 	private void notFound(final Queryable queryable, int value) {
 		final Item<Node> item = first(queryable, new TermQuery(termId(value)));
 		assertNotNull(item);
@@ -222,6 +226,7 @@ public class MultiSearchTest {
 		return queryable.query(LucisQuery.first(query, MAPPER));
 	}
 
+	@SuppressWarnings("unused")
 	private Result count(final Queryable queryable, final Query query) {
 		return queryable.query(LucisQuery.count(query, null));
 	}
@@ -285,6 +290,7 @@ public class MultiSearchTest {
 			assertEquals(this.str, str);
 		}
 
+		@SuppressWarnings("unused")
 		private void test(int value, String str) {
 			test(value(value), str);
 		}

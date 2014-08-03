@@ -16,6 +16,7 @@
 package net.sf.lucis.core.impl;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -45,7 +46,7 @@ abstract class AbstractStore extends AbstractNamed implements DirectoryProvider 
 	private final Lock lock = new ReentrantLock();
 	/** Stopwatch . */
 	@GuardedBy("lock")
-	private final Stopwatch watch = new Stopwatch();
+	private final Stopwatch watch = Stopwatch.createUnstarted();
 	/** Last sequence. */
 	@GuardedBy("lock")
 	private long lastSequence = Long.MIN_VALUE;
@@ -87,7 +88,7 @@ abstract class AbstractStore extends AbstractNamed implements DirectoryProvider 
 		try {
 			if (!lastManaged) {
 				newReader();
-			} else if (lastSequence != sequence.get() || watch.elapsedMillis() > MAX_HOLD_MS) {
+			} else if (lastSequence != sequence.get() || watch.elapsed(TimeUnit.MILLISECONDS) > MAX_HOLD_MS) {
 				reopen();
 			} else {
 				reader.incRef();
@@ -133,10 +134,14 @@ abstract class AbstractStore extends AbstractNamed implements DirectoryProvider 
 	}
 
 	private void shutdown() {
-		Closeables.closeQuietly(reader);
-		reader = null;
-		lastManaged = false;
-		watch.reset();
+		try {
+			Closeables.close(reader, true);
+			reader = null;
+			lastManaged = false;
+			watch.reset();
+		} catch (IOException e) {
+			// TODO: Log
+		}
 	}
 
 	private void reopen() throws IOException {

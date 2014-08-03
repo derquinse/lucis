@@ -137,7 +137,9 @@ public class HighlighterTest {
 	}
 
 	private static class Node {
+		@SuppressWarnings("unused")
 		String title;
+		@SuppressWarnings("unused")
 		String desc;
 		Multimap<String, String> fragments;
 

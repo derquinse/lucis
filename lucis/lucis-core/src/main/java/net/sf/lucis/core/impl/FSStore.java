@@ -33,7 +33,7 @@ import net.sf.lucis.core.StoreException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
-import com.google.common.io.ByteStreams;
+import com.google.common.io.ByteSource;
 
 /**
  * File system-based store.
@@ -105,7 +105,7 @@ public class FSStore<T> extends AbstractStore implements Store<T> {
 			final ByteArrayOutputStream bos = new ByteArrayOutputStream(256);
 			serializer.write(checkpoint, bos);
 			data = bos.toByteArray();
-			DurableFiles.copy(ByteStreams.newInputStreamSupplier(data), control);
+			DurableFiles.copy(ByteSource.wrap(data), control);
 		} catch (IOException e) {
 			throw new StoreException(e);
 		} finally {

@@ -39,7 +39,7 @@
 	</scm>
 	<properties>
 		<luceneVersion>3.6.2</luceneVersion>
-		<djVersion>0.1.12</djVersion>
+		<djVersion>0.2.2</djVersion>
 	</properties>
 	<build>
 		<plugins>
