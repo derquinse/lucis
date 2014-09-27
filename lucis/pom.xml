@@ -9,7 +9,7 @@
 	<artifactId>lucis</artifactId>
 	<packaging>pom</packaging>
 	<name>Lucene Index Service</name>
-	<version>3.6.5</version>
+	<version>3.6.6</version>
 	<description />
 	<url>http://lucis.sf.net</url>
 	<developers>
@@ -86,7 +86,7 @@
 					<maxmemory>640m</maxmemory>
 					<additionalparam>-Xdoclint:none</additionalparam>
 					<links>
-						<link>http://docs.guava-libraries.googlecode.com/git-history/v17.0/javadoc/</link>
+						<link>http://docs.guava-libraries.googlecode.com/git-history/v18.0/javadoc/</link>
 						<link>http://lucene.apache.org/core/3_6_2/api/all/</link>
 					</links>
 					<version>false</version>
