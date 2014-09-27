@@ -35,7 +35,7 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.OpenBitSet;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 
@@ -69,7 +69,7 @@ public abstract class LucisQuery<T> {
 				if (docs.totalHits > 0) {
 					ScoreDoc sd = docs.scoreDocs[0];
 					Document doc = searcher.doc(sd.doc);
-					HighlightedQuery highlighted = Objects.firstNonNull(highlight, Highlight.no()).highlight(rewritten);
+					HighlightedQuery highlighted = MoreObjects.firstNonNull(highlight, Highlight.no()).highlight(rewritten);
 					float score = sd.score;
 					T item = mapper.map(sd.doc, score, doc, highlighted.getFragments(doc));
 					return new Item<T>(docs.totalHits, score, w.elapsed(TimeUnit.MILLISECONDS), item);
@@ -110,7 +110,7 @@ public abstract class LucisQuery<T> {
 					float score = docs.getMaxScore();
 					if (n > first) {
 						final List<T> items = Lists.newArrayListWithCapacity(n - first);
-						HighlightedQuery highlighted = Objects.firstNonNull(highlight, Highlight.no()).highlight(rewritten);
+						HighlightedQuery highlighted = MoreObjects.firstNonNull(highlight, Highlight.no()).highlight(rewritten);
 						for (int i = first; i < n; i++) {
 							ScoreDoc sd = docs.scoreDocs[i];
 							Document doc = searcher.doc(sd.doc);
